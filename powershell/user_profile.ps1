@@ -1,9 +1,12 @@
+# source this file in your profile $PROFILE, 
+# for instance: . ~\source\repos\dotfiles-windows\powershell\user_profile.ps1
 # Aliases
 Set-Alias guidgen uuidgen
 Set-Alias paste Get-Clipboard
 Set-Alias clip Set-Clipboard
 Set-Alias vi nvim
 Set-Alias vim nvim
+Set-Alias k kubectl
 
 $homeFolder = [environment]::GetFolderPath("UserProfile")
 $documentsFolder = [environment]::GetFolderPath("MyDocuments")
@@ -62,52 +65,6 @@ if ($host.Name -eq 'ConsoleHost') {
 
 Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
 Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
-
-Set-PSReadLineKeyHandler -Key F7 `
-    -BriefDescription History `
-    -LongDescription 'Show command history' `
-    -ScriptBlock {
-    $pattern = $null
-    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$pattern, [ref]$null)
-    if ($pattern) {
-        $pattern = [regex]::Escape($pattern)
-    }
-
-    $history = [System.Collections.ArrayList]@(
-        $last = ''
-        $lines = ''
-        foreach ($line in [System.IO.File]::ReadLines((Get-PSReadLineOption).HistorySavePath)) {
-            if ($line.EndsWith('`')) {
-                $line = $line.Substring(0, $line.Length - 1)
-                $lines = if ($lines) {
-                    "$lines`n$line"
-                }
-                else {
-                    $line
-                }
-                continue
-            }
-
-            if ($lines) {
-                $line = "$lines`n$line"
-                $lines = ''
-            }
-
-            if (($line -cne $last) -and (!$pattern -or ($line -match $pattern))) {
-                $last = $line
-                $line
-            }
-        }
-    )
-    $history.Reverse()
-
-    $command = $history | Out-GridView -Title History -PassThru
-    if ($command) {
-        [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
-        [Microsoft.PowerShell.PSConsoleReadLine]::Insert(($command -join "`n"))
-    }
-}
-
 Set-PSReadLineOption -BellStyle None
 Set-PSReadLineOption -PredictionSource History
 Set-PSReadLineOption -PredictionViewStyle ListView
@@ -154,9 +111,6 @@ function uuidgen() {
     }
 }
 
-# In $PROFILE:
-# . $env:USERPROFILE\.config\powershell\user_profile.ps1
-
 # Fonts
 # Caskaydia Cove Nerd Font from https://www.nerdfonts.com/font-downloads
 # curl -L -o font.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/CascadiaCode.zip
@@ -184,6 +138,7 @@ function uuidgen() {
 # Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 # Install-Module -Name powershell-yaml -Force
 # Install-Module -Name MSAL.PS
+# Install-Module Pscx -Scope CurrentUser
 
 # NPM stuff
 # npm install azure-functions-core-tools -g
@@ -194,6 +149,7 @@ function uuidgen() {
 
 # Other stuff to install
 #
+# winget install -e --id=jqlang.jq
 # winget install -e --id Git.Git
 # winget install -e --id JanDeDobbeleer.OhMyPosh
 # winget install -e --id Microsoft.AzureCLI

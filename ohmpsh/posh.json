@@ -1,41 +1,36 @@
 {
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 2,
   "final_space": true,
-  "console_title": true,
-  "console_title_style": "folder",
   "blocks": [
     {
       "type": "prompt",
       "alignment": "left",
-      "horizontal_offset": 0,
-      "vertical_offset": 0,
       "segments": [
         {
           "type": "path",
           "style": "powerline",
-          "powerline_symbol": "",
-          "invert_powerline": false,
+          "powerline_symbol": "\ue0b0",
           "foreground": "#ffffff",
           "background": "#2e9599",
-          "leading_diamond": "",
-          "trailing_diamond": "",
+          "leading_diamond": "\ue0b6",
+          "trailing_diamond": "\ue0b0",
+          "template": " \ue5ff {{ .Path }} ",
           "properties": {
-            "prefix": "  ",
             "style": "folder"
           }
         },
         {
           "type": "git",
           "style": "powerline",
-          "powerline_symbol": "",
-          "invert_powerline": false,
+          "powerline_symbol": "\ue0b0",
           "foreground": "#193549",
           "background": "#4ec6ca",
-          "leading_diamond": "",
-          "trailing_diamond": "",
+          "template": " {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} ",
           "properties": {
-            "display_status": true,
-            "display_stash_count": true,
-            "display_upstream_icon": true
+            "fetch_stash_count": true,
+            "fetch_status": true,
+            "fetch_upstream_icon": true
           }
         }
       ]
