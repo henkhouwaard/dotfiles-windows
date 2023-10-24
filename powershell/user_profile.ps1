@@ -8,21 +8,20 @@ Set-Alias vi nvim
 Set-Alias vim nvim
 Set-Alias k kubectl
 
+$storageconnectionstring = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"
+$env:azuritecs = $storageconnectionstring
 $homeFolder = [environment]::GetFolderPath("UserProfile")
 $documentsFolder = [environment]::GetFolderPath("MyDocuments")
 $sourceRoot = "$($homeFolder)/source"
 $repoRoot = "$($sourceRoot)/repos"
 $scriptsRoot = "$($repoRoot)/scripts"
-$localScriptsRoot = "$($documentsFolder)/localscripts"
+$localScriptsRoot = "$($documentsFolder)/scripts"
 $gitBinRoot = "C:\Program Files\Git\usr\bin"
 $Env:RepoRoot = $repoRoot
 
 if (Test-Path -Path $gitBinRoot) {
     Write-Host "Add Git bin tools"
-    Set-Alias tig "$($gitBinRoot)\tig.exe"
-    Set-Alias grep "$($gitBinRoot)\grep.exe"
-    Set-Alias less "$($gitBinRoot)\less.exe"
-    Set-Alias tail "$($gitBinRoot)\tail.exe"
+    $env:path += ";$gitBinRoot"
 }
 
 if (Test-Path -Path "$env:USERPROFILE/.azure-kubelogin") {
@@ -53,9 +52,12 @@ else {
     Write-Host "Check https://github.com/Microsoft/artifacts-credprovider"
 }
 
+$env:ROBECO_PYTHON_LIB_PATH = "C:\Program Files\Python38\python38.dll"
+$env:ROBECO_ALGORITHM_ROOT_PATH = "C:\Users\ROB5347\pyenv"
+
 # Prompt
-Import-Module -Name Terminal-Icons
-oh-my-posh --init --shell pwsh --config "$($repoRoot)/dotfiles-windows/ohmpsh/posh.json" | Invoke-Expression
+oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH/tokyonight_storm.omp.json" | Invoke-Expression
+oh-my-posh --init --shell pwsh --config "" | Invoke-Expression
 
 # PSReadline Config
 # (Snippets from https://gist.github.com/shanselman/25f5550ad186189e0e68916c6d7f44c3)
@@ -74,6 +76,10 @@ Set-PSReadLineOption -EditMode Windows
 Import-Module -Name DockerCompletion
 
 # Utility functions
+function tile() {
+    get-process komo* | stop-process
+    komorebic start -c $Env:USERPROFILE\komorebi.json --whkd
+}
 function touch() {
     New-Item -ItemType File -Name $args[0]
 }
